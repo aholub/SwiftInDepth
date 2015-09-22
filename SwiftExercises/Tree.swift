@@ -39,7 +39,7 @@ public protocol Collection {
     func findMatchOf( lookingFor: T         ) -> T?
     
     func contains   ( lookingFor: T         ) -> Bool
-    func traverse   ( iterator: (T)->Bool   ) -> Bool
+    func traverse   ( iterator: (T)->Bool   )
 }
 
 public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
@@ -49,6 +49,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
     
     private var size:    Int = 0;
     public var  count:   Int  { return size }
+
     public var  isEmpty: Bool { return root == nil; }
     
     //----------------------------------------------------------------------
@@ -72,62 +73,11 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
             add(element)
         }
     }
-    
-    //----------------------------------------------------------------------
-    /// Access as if it were an array, using an index
-    subscript (index:Int)->T {      // read-only access, so explicit get{...} not
-        return asArray()[index]     // required
-    }
-    
-    //----------------------------------------------------------------------
-    /// Covert to an array
-    public func asArray() -> [T] {
-        if let array = arrayVersion {
-            return array
-        }
-        else {
-            arrayVersion = []
-            traverse( .Inorder ){ self.arrayVersion!.append($0); return true }
-        }
-        return arrayVersion!
-    }
 
-    //----------------------------------------------------------------------
-    public func filter( okay: (T)->Bool ) -> Tree<T> {
-        var result: Tree<T> = [];
-        traverse( .Inorder ){
-            if(okay($0)) {
-                result.add($0)
-            }
-            return true
-        }
-        return result
-    }
-    
-    //----------------------------------------------------------------------
-    public func map( transform: (T)->T ) -> Tree<T> {
-        var result: Tree<T> = [];
-        traverse( .Inorder ){
-            result.add( transform($0) )
-            return true
-        }
-        return result
-    }
-    
-    //----------------------------------------------------------------------
-    public func reduce<U>(first: U, combine: (U, T) -> U) -> U {
-        var combined = first;
-        traverse( .Inorder ){
-            combined = combine(combined, $0)
-            return true;
-        }
-        return combined
-    }
-    
     //----------------------------------------------------------------------
     /// Convert to a String using the indicated delimiter between elements.
     public func asString ( delim: String = " " ) -> String {
-        return reduce("", { return countElements($0)==0 ? "\($1)" : "\($0)\(delim)\($1)"})
+        return reduce("", combine:{ return $0.characters.count == 0 ? "\($1)" : "\($0)\(delim)\($1)"})
     }
     
     //----------------------------------------------------------------------
@@ -142,8 +92,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
             var current = root!;
             for ;;
             {
-                var currentElement = current.element
-                if element > currentElement { // go right
+                if element > current.element { // go right
                     if current.rightChild == nil {
                         current.rightChild = Node(element)
                         break;
@@ -152,7 +101,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
                         current = current.rightChild!
                     }
                 }
-                else if element < currentElement { // go left
+                else if element < current.element { // go left
                     if current.leftChild == nil {
                         current.leftChild = Node(element)
                         break;
@@ -182,29 +131,15 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
             let targetSide      = target.isOnSideOf(parent)
             
             if( target.rightChild == nil ) {
-                replaceChildeNodeChildOf( parent, on: targetSide, with: orphanedSubtree );
+                replaceChildNodeChildOf( parent, on: targetSide, with: orphanedSubtree );
             } else {
                 target.rightChild!.fillFirstAvailableSlotOn(.Left, with: orphanedSubtree)
-                replaceChildeNodeChildOf( parent, on: targetSide, with: target.rightChild );
+                replaceChildNodeChildOf( parent, on: targetSide, with: target.rightChild );
             }
             arrayVersion = nil; // force a rebild the next time it's needed
             return target.element
         }
         return nil;
-    }
-    
-    /// Replace the node on the specified side of the parent with the specified node (can be nil).
-    /// If the parent reference is nill, it's assumed to be the root and the root node is
-    /// replaced.
-    
-    private func replaceChildeNodeChildOf( parent: Node<T>?, on: Direction, with: Node<T>?) {
-        if( parent == nil ) {  // parent node is the root node
-            root = with;
-        } else if on == .Left {
-            parent!.leftChild = with
-        } else {
-            parent!.rightChild = with
-        }
     }
 
     /// Return the element that matches (==) lookingFor or nil if you can't find it.
@@ -212,7 +147,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
     /// found node and its parent (see doFind()).
     
     public func findMatchOf( lookingFor: T ) -> T? {
-        if let (found, parent) = doFind(lookingFor, current:root, parent:nil) {
+        if let (found, _) = doFind(lookingFor, current:root, parent:nil) {
             return found.element
         }
         return nil
@@ -256,31 +191,30 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
         return current?.element
     }
     //----------------------------------------------------------------------
-    /// For mysterious reasons, can't use the other overload of traverse
-    /// to do traverse{/*action} (with a trailing closure), even though the
-    /// first argument defaults. Define an overload to make it work.
 
-    public func traverse(iterator: (T) -> Bool) -> Bool {
-        return traverseIn( root, iterator )
-    }
-
-    //----------------------------------------------------------------------
-    public func traverse( _ direction: Ordering = .Inorder, visit: (T)->Bool )
+    public func traverse( direction: Ordering, visit: (T)->Bool )
     {   switch( direction ) {
         case .Inorder:   traverseIn  ( root, visit )
         case .Preorder:  traversePre ( root, visit )
         case .Postorder: traversePost( root, visit )
         }
     }
-    
-    public func print () {
+
+    // Need this one to conform to Collection protocol. Can't do the same thing
+    // with a default first argument, unfortunately.
+    //
+    public func traverse( iterator: (T)->Bool   ) {
+        return traverse( .Inorder, visit: iterator )
+    }
+
+    public func printAll () {
         traverse {
-            println("\($0)")
+            print( "\($0)" )
             return true
         }
     }
     
-    private func traverseIn(current: Node<T>?, visit: (T)->Bool) -> Bool {
+    private func traverseIn(current: Node<T>?, _ visit: (T)->Bool) -> Bool {
         if let c = current {
             if !traverseIn ( c.leftChild, visit  ){ return false }
             if !visit      ( c.element           ){ return false }
@@ -289,7 +223,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
         return true;
     }
     
-    private func traversePost( current: Node<T>?, visit: (T)->Bool) -> Bool {
+    private func traversePost( current: Node<T>?, _ visit: (T)->Bool) -> Bool {
         if let c = current {
             if !traverseIn ( c.leftChild, visit  ){ return false }
             if !traverseIn ( c.rightChild, visit ){ return false }
@@ -298,7 +232,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
         return true;
     }
     
-    private func traversePre( current: Node<T>?, visit: (T)->Bool) -> Bool {
+    private func traversePre( current: Node<T>?, _ visit: (T)->Bool) -> Bool {
         if let c = current {
             if !visit      ( c.element           ){ return false }
             if !traverseIn ( c.leftChild, visit  ){ return false }
@@ -308,19 +242,13 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
     }
 }
 
-//----------------------------------------------------------------------
-extension Tree: SequenceType {
-    public func generate() -> TreeGenerator<T> {
-        return TreeGenerator<T>( items: asArray() )
-    }
-}
-    
-func += <T>( left: Tree<T>, right: T ) {
-    left.add(right)
-}
-//----------------------------------------------------------------------
+//======================================================================
 // A Node can't be a struct because we can't have references to
 // value objects.
+//
+// We can't nest the definition inside of Tree, where it belongs, because
+// of a COMPILER BUG. (Causes a hard crash.)
+//
 
 private class Node<T> {
     var rightChild: Node?
@@ -330,18 +258,24 @@ private class Node<T> {
     init( _ element: T ) {
         self.element = element
     }
-    
-    // Returns the side of the parent node that that this node is on.
-    // Returns .Left if this is the root node.
-    //
+}
+
+// Stuff to support remove
+//
+extension Node {
+
+    /// Returns the side of the parent node that that the current node is on.
+    /// Returns .Left if this is the root node.
+    ///
     func isOnSideOf (parent: Node<T>?) -> Direction {
         return parent != nil && parent?.rightChild === self ? .Right : .Left
     }
-    
-    /// The returned method moves left every time it's called. If
-    /// it can move left, it returns true. If it can't move left because
-    /// the current nodes left child is nil, it inserts the insertThis node
-    /// in the left position and returns false.
+
+    /// Finds the first available (nil) slot in the indicated direction, then inserts
+    /// "insertsThis" into that slot. For example, if isThisDirection is .Left, it starts
+    /// traversing at the current node, following links specified in the leftChild
+    /// reference until it finds a nil leftChild. Then it inserts the insertNode
+    /// in place of the nil.
 
     private func fillFirstAvailableSlotOn(inThisDirection: Direction, with insertThis: Node<T>?) {
         switch (inThisDirection) {
@@ -353,7 +287,85 @@ private class Node<T> {
         }
     }
 }
+
+extension Tree {
+    
+    /// Replace the node on the specified side of the parent with the specified node (can be nil).
+    /// If the parent reference is nill, it's assumed to be the root and the root node is
+    /// replaced.
+    
+    private func replaceChildNodeChildOf( parent: Node<T>?, on: Direction, with: Node<T>?) {
+        if( parent == nil ) {  // parent node is the root node
+            root = with;
+        } else if on == .Left {
+            parent!.leftChild = with
+        } else {
+            parent!.rightChild = with
+        }
+    }
+}
+
 //======================================================================
+func += <T>( left: Tree<T>, right: T ) {
+    left.add(right)
+}
+//----------------------------------------------------------------------
+extension Tree {
+    public func filter( okay: (T)->Bool ) -> Tree<T> {
+        let result: Tree<T> = [];
+        traverse( .Inorder ){
+            if(okay($0)) {
+                result.add($0)
+            }
+            return true
+        }
+        return result
+    }
+    
+    //----------------------------------------------------------------------
+    public func map( transform: (T)->T ) -> Tree<T> {
+        let result: Tree<T> = [];
+        traverse( .Inorder ){
+            result.add( transform($0) )
+            return true
+        }
+        return result
+    }
+    
+    //----------------------------------------------------------------------
+    public func reduce<U>(first: U, combine: (U, T) -> U) -> U {
+        var combined = first;
+        traverse( .Inorder ){
+            combined = combine(combined, $0)
+            return true;
+        }
+        return combined
+    }
+}
+//======================================================================
+extension Tree: SequenceType {
+
+    subscript (index:Int)->T {      // read-only access, so explicit get{...} not
+        return asArray()[index]     // required
+    }
+
+    public func asArray() -> [T] {
+        if let array = arrayVersion {
+            return array
+        }
+        else {
+            arrayVersion = []
+            traverse( .Inorder ){ self.arrayVersion!.append($0); return true }
+        }
+        return arrayVersion!
+    }
+
+    public func generate() -> TreeGenerator<T> {
+        return TreeGenerator<T>( items: asArray() )
+    }
+}
+
+//----------------------------------------------------------------------
 public class TreeGenerator<T>: GeneratorType {
     var current = 0;
     let items:[T]
@@ -380,9 +392,13 @@ public enum Direction{ case Left, Right }
 /// in such a way that the behvior of the Comparable methods would
 /// change if the item is manipulated in some way.
 
-@objc public protocol Lockable {
+public protocol Lockable {
     func lock   ()->()
     func unlock ()->()
+}
+
+public enum LockedObjectException : ErrorType {
+    case ObjectLocked
 }
 
 public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
@@ -408,82 +424,3 @@ public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
         return found
     }
 }
-
-//======================================================================
-// Tests
-//======================================================================
-
-var t: Tree = Tree<String>();
-
-t.smallest()
-t.largest()
-
-t.add( "d" );
-
-t.smallest()
-t.largest()
-
-t.add( "b" );
-t.add( "f" );
-t.add( "a" );
-t.add( "c" );
-t.add( "e" );
-t.add( "g" );
-t.print()
-t.findMatchOf("g")
-t.findMatchOf("a")
-t.findMatchOf("d")
-t.root
-t.root!.leftChild
-t.root!.rightChild
-
-private var (current,parent) = t.doFind( "d", current: t.root, parent: nil )!
-current.element
-parent == nil ? "nil" : parent!.element
-
-let t2: Tree<String> = ["D", "B", "F", "A", "C", "E"]
-t2 += "G";
-
-t2.print()
-
-for i in 0..<t2.count {
-    println("-> \(t2[i])")
-}
-
-for e in t2 {
-    println("--> \(e)")
-}
-
-var t3: Tree<String> = ["b", "a"]
-t3.root
-t3.remove("a")
-t3.root
-t3.remove("b")
-t3.root
-
-t3 = [ "b", "a", "c" ]
-t3.asString()
-var x =
-    t3.filter{ $0 <= "b" }.map{ $0.uppercaseString }.asString()
-
-t3.remove("c")
-t3.asString()
-
-t3 = [ "d", "b", "f", "a", "c", "e", "g" ]
-t3.smallest()
-t3.largest()
-t3.asString(delim:", ")
-t3.remove("g")
-t3.asString(delim:", ")
-
-class MyClass : Comparable, Lockable {
-    func lock(){}
-    func unlock(){}
-}
-func == (l: MyClass, r:MyClass ) -> Bool { return false }
-func <= (l: MyClass, r:MyClass ) -> Bool { return false }
-func >= (l: MyClass, r:MyClass ) -> Bool { return false }
-func < (l: MyClass, r:MyClass ) -> Bool { return false }
-func > (l: MyClass, r:MyClass ) -> Bool { return false }
-
-let st = SafeTree<MyClass>()
