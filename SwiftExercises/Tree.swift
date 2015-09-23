@@ -36,15 +36,19 @@ public protocol Collection {
     /// safer. You don't have to worry about any of this if the element
     /// is Lockable.
     
-    func findMatchOf( lookingFor: T         ) -> T?
-    
-    func contains   ( lookingFor: T         ) -> Bool
-    func traverse   ( iterator: (T)->Bool   )
+    func findMatchOf     ( lookingFor: T         ) -> T?
+    func contains        ( lookingFor: T         ) -> Bool
+    func traverse        ( iterator: (T)->Bool   )
+    func forEveryElement ( iterator: (T)->()     )
 }
 
-//----------------------------------------------------------------------
-public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
-{
+//======================================================================
+
+public enum Ordering { case Inorder, Postorder, Preorder }
+public enum Direction{ case Left, Right }
+
+//======================================================================
+public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
     private var root: Node<T>?
     private var size:    Int = 0;
     public var  count:   Int  { return size }
@@ -60,6 +64,13 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
 
     //----------------------------------------------------------------------
     public var  isEmpty: Bool { return root == nil; }
+
+    //----------------------------------------------------------------------
+    public func clear() {
+        root = nil
+        arrayVersion = nil
+        size = 0
+    }
     
     //----------------------------------------------------------------------
     /// ArrayLiteralCovertible support. Initilize from and array literal. e.g.
@@ -77,8 +88,8 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
     /// 
     /// var t:Tree<String>( ["a", "b", "c"] )
     ///
-    public init ( array: [T] )
-    {   for element in array {
+    public init ( _ elements: [T] )
+    {   for element in elements {
             add(element)
         }
     }
@@ -140,48 +151,31 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
             let targetSide      = target.isOnSideOf(parent)
             
             if( target.rightChild == nil ) {
-                replaceChildNodeChildOf( parent, on: targetSide, with: orphanedSubtree );
+                replaceChildOf( parent, on: targetSide, with: orphanedSubtree );
             } else {
                 target.rightChild!.fillFirstAvailableSlotOn(.Left, with: orphanedSubtree)
-                replaceChildNodeChildOf( parent, on: targetSide, with: target.rightChild );
+                replaceChildOf( parent, on: targetSide, with: target.rightChild );
             }
             arrayVersion = nil; // force a rebild the next time it's needed
+
+            --size
             return target.element
         }
         return nil;
     }
 
-    /// Return the element that matches (==) lookingFor or nil if you can't find it.
-    /// Returns a tuple holding optional references to both the
-    /// found node and its parent (see doFind()).
+    /// Replace the node on the specified side of the parent with the specified node (can be nil).
+    /// If the parent reference is nill, it's assumed to be the root and the root node is
+    /// replaced.
     
-    public func findMatchOf( lookingFor: T ) -> T? {
-        if let (found, _) = doFind(lookingFor, current:root, parent:nil) {
-            return found.element
+    private func replaceChildOf( parent: Node<T>?, on: Direction, with: Node<T>?) {
+        if( parent == nil ) {  // parent node is the root node
+            root = with;
+        } else if on == .Left {
+            parent!.leftChild = with
+        } else {
+            parent!.rightChild = with
         }
-        return nil
-    }
-    
-    public func contains( lookingFor: T ) -> Bool {
-        return findMatchOf( lookingFor ) != nil
-    }
-    
-    /// The workhorse method used by both findMatchOf and remove.
-    /// When you find something, all you need is the node you're looking for, but when you're
-    /// removing, you'll need both that node and its parent. Consequently, this method returns
-    /// an optional tuple that's nil if you can't find what you're looking for. The tuple holds
-    /// a reference to the current node and also a reference to an optional parent node. The latter
-    /// is nil when found item is the root node.
-    ///
-    private func doFind( lookingFor: T, current: Node<T>?, parent: Node<T>? )->
-                                                    (found: Node<T>, parent: Node<T>?)?
-    {
-        if let c = current {
-            return  lookingFor > c.element ? doFind(lookingFor, current: c.rightChild, parent: current):
-                    lookingFor < c.element ? doFind(lookingFor, current: c.leftChild,  parent: current):
-                    /* == */                 (c, parent)
-        }
-        return nil
     }
     //----------------------------------------------------------------------
     public func smallest() -> T? {
@@ -200,6 +194,39 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
         return current?.element
     }
     //----------------------------------------------------------------------
+    /// Return the element that matches (==) lookingFor or nil if you can't find it.
+    /// Returns a tuple holding optional references to both the
+    /// found node and its parent (see doFind()).
+    
+    public func findMatchOf( lookingFor: T ) -> T? {
+        if let (found, _) = doFind(lookingFor, current:root, parent:nil) {
+            return found.element
+        }
+        return nil
+    }
+    
+    public func contains( lookingFor: T ) -> Bool {
+        return findMatchOf( lookingFor ) != nil
+    }
+    //----------------------------------------------------------------------
+    /// The workhorse method used by both findMatchOf and remove.
+    /// When you find something, all you need is the node you're looking for, but when you're
+    /// removing, you'll need both that node and its parent. Consequently, this method returns
+    /// an optional tuple that's nil if you can't find what you're looking for. The tuple holds
+    /// a reference to the current node and also a reference to an optional parent node. The latter
+    /// is nil when found item is the root node.
+    ///
+    private func doFind( lookingFor: T, current: Node<T>?, parent: Node<T>? )->
+                                                    (found: Node<T>, parent: Node<T>?)?
+    {
+        if let c = current {
+            return  lookingFor > c.element ? doFind(lookingFor, current: c.rightChild, parent: current):
+                    lookingFor < c.element ? doFind(lookingFor, current: c.leftChild,  parent: current):
+                    /* == */                 (c, parent)
+        }
+        return nil
+    }
+    //----------------------------------------------------------------------
 
     public func traverse( direction: Ordering, visit: (T)->Bool )
     {   switch( direction ) {
@@ -209,18 +236,19 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
         }
     }
 
-    // Need this one to conform to Collection protocol. Can't do the same thing
-    // with a default first argument, unfortunately.
-    //
+    // Need these two to conform to the Collection protocol. Can't do that
+    // by defaulting the first argument, unfortunately.
+
     public func traverse( iterator: (T)->Bool   ) {
         return traverse( .Inorder, visit: iterator )
     }
 
+    public func forEveryElement( iterator: (T)->()   ) {
+        return traverse( .Inorder, visit: { iterator($0); return true } )
+    }
+
     public func printAll () {
-        traverse {
-            print( "\($0)" )
-            return true
-        }
+        forEveryElement{ print( "\($0)" ) }
     }
     
     private func traverseIn(current: Node<T>?, _ visit: (T)->Bool) -> Bool {
@@ -234,20 +262,36 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
     
     private func traversePost( current: Node<T>?, _ visit: (T)->Bool) -> Bool {
         if let c = current {
-            if !traverseIn ( c.leftChild, visit  ){ return false }
-            if !traverseIn ( c.rightChild, visit ){ return false }
-            if !visit      ( c.element           ){ return false }
+            if !traversePost ( c.leftChild, visit  ){ return false }
+            if !traversePost ( c.rightChild, visit ){ return false }
+            if !visit        ( c.element           ){ return false }
         }
         return true;
     }
     
     private func traversePre( current: Node<T>?, _ visit: (T)->Bool) -> Bool {
         if let c = current {
-            if !visit      ( c.element           ){ return false }
-            if !traverseIn ( c.leftChild, visit  ){ return false }
-            if !traverseIn ( c.rightChild, visit ){ return false }
+            if !visit       ( c.element           ){ return false }
+            if !traversePre ( c.leftChild, visit  ){ return false }
+            if !traversePre ( c.rightChild, visit ){ return false }
         }
         return true;
+    }
+
+    //======================================================================
+    // Test methods (internal access)
+
+    func _verifyChildren( parent: T, left: T?, right: T? ) -> Bool {
+        guard let (found, _) = doFind(parent, current:root, parent:nil)
+        else { return false }
+
+        switch (found.leftChild, found.rightChild ) {
+            case (nil,   nil  ) where left==nil         && right==nil          : return true
+            case (nil,   let r) where left==nil         && right!==r?.element  : return true
+            case (let l, nil  ) where left!==l?.element && right==nil          : return true
+            case (let l, let r) where left!==l?.element && right!==r?.element  : return true
+            default                                                            : return false
+        }
     }
 }
 
@@ -267,12 +311,9 @@ private class Node<T> {
     init( _ element: T ) {
         self.element = element
     }
-}
 
-// Stuff to support remove
-//
-extension Node {
-
+    // Stuff to support remove
+    //
     /// Returns the side of the parent node that that the current node is on.
     /// Returns .Left if this is the root node.
     ///
@@ -297,23 +338,6 @@ extension Node {
     }
 }
 
-extension Tree {
-    
-    /// Replace the node on the specified side of the parent with the specified node (can be nil).
-    /// If the parent reference is nill, it's assumed to be the root and the root node is
-    /// replaced.
-    
-    private func replaceChildNodeChildOf( parent: Node<T>?, on: Direction, with: Node<T>?) {
-        if( parent == nil ) {  // parent node is the root node
-            root = with;
-        } else if on == .Left {
-            parent!.leftChild = with
-        } else {
-            parent!.rightChild = with
-        }
-    }
-}
-
 //======================================================================
 func += <T>( left: Tree<T>, right: T ) {
     left.add(right)
@@ -323,10 +347,29 @@ func -= <T>( left: Tree<T>, right: T ) {
     left.remove(right)
 }
 
+/// Contains operator:
+///    t <> "x" is true if t is a Tree<String> that contains "x"
+///
+infix operator <> { associativity left precedence 130 } // same as other relational ops
+func <> <T>( left: Tree<T>, right: T ) -> Bool {
+    return left.contains(right)
+}
+
 extension Tree {
     subscript (index:Int)->T {      // read-only access, so explicit get{...} not
         return asArray()[index]     // required
     }
+
+    // One could take two approaches to finding the Nth element. One is to
+    // traverse the tree in order, increment a counter on each visit, and stop
+    // when we reach the Nth node. The other approach is to do a full traversal
+    // an build an array that holds the nodes in order. The latter approach
+    // makes more sense if we're going to do things like traverse the tree as
+    // if it were an array, or if we access the nodes by array index regularly.
+    // So, that's what I've done. Note that that I only rebuild the array if
+    // I have to (i.e. the tree hasn't been modified since the last time I
+    // used it). The add() and remove() methods set arrayVersion to nil to
+    // force me to rebuild it.
 
     public func asArray() -> [T] {
         if let array = arrayVersion {
@@ -344,31 +387,26 @@ extension Tree {
 extension Tree {
     public func filter( okay: (T)->Bool ) -> Tree<T> {
         let result: Tree<T> = [];
-        traverse( .Inorder ){
+        forEveryElement {
             if(okay($0)) {
                 result.add($0)
             }
-            return true
         }
         return result
     }
-    
     //----------------------------------------------------------------------
     public func map( transform: (T)->T ) -> Tree<T> {
         let result: Tree<T> = [];
-        traverse( .Inorder ){
+        forEveryElement {
             result.add( transform($0) )
-            return true
         }
         return result
     }
-    
     //----------------------------------------------------------------------
     public func reduce<U>(first: U, combine: (U, T) -> U) -> U {
         var combined = first;
-        traverse( .Inorder ){
+        forEveryElement {
             combined = combine(combined, $0)
-            return true;
         }
         return combined
     }
@@ -390,9 +428,6 @@ public class TreeGenerator<T>: GeneratorType {
         return items[current++]
     }
 }
-//======================================================================
-public enum Ordering { case Inorder, Postorder, Preorder }
-public enum Direction{ case Left, Right }
 
 //======================================================================
 /// The safe tree adds the ability to lock a node when it's inserted in
@@ -402,10 +437,18 @@ public enum Direction{ case Left, Right }
 //======================================================================
 
 /// It's dangerous to put an item in the tree if the key values used by
-/// the Comparable methods can change their behavior if when the item is
-/// is modified. Lockable objects, once locked, cannot be modified
-/// in such a way that the behvior of the Comparable methods would
+/// the Comparable methods can change their behavior when the item is
+/// is modified. In other words, if you put an item with a specific
+/// key value into the tree, changing the key without first removing
+/// it from the tree is a serious bug. Solve that problem with a tree
+/// make up of "Lockable" objects. Lockable objects, once locked, cannot
+/// be modified in such a way that the behvior of the Comparable methods would
 /// change if the item is manipulated in some way.
+///
+/// THIS CLASS IS SUSEPTABLE TO FRAGILE-BASE-CLASS bugs. It's essential that
+/// all Tree<T> methods that can modify the tree have overrides in the
+/// current class. Be careful. See the Undoable Tree for a way around this
+/// problem.
 
 public protocol Lockable {
     func lock   ()->()
@@ -419,11 +462,11 @@ public enum LockedObjectException : ErrorType {
 public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
 {
     public required init( arrayLiteral elements: T...) {
-        super.init(array: elements)
+        super.init(elements)
     }
     
-    public override init( array: [T] ) {
-        super.init(array:array)
+    public override init( _ array: [T] ) {
+        super.init(array)
     }
     
     public override func add( element: T        ) -> Bool {

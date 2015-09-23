@@ -11,6 +11,10 @@
 		9F1CB5571BB0C6CF00CC50A7 /* TreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5561BB0C6CF00CC50A7 /* TreeTests.swift */; };
 		9F1CB5621BB0C70200CC50A7 /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5611BB0C70200CC50A7 /* Tree.swift */; settings = {ASSET_TAGS = (); }; };
 		9F1CB5641BB11E3200CC50A7 /* UndoableTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5631BB11E3200CC50A7 /* UndoableTree.swift */; settings = {ASSET_TAGS = (); }; };
+		9F3979431BB345F700591F69 /* StringTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3979421BB345F700591F69 /* StringTree.swift */; settings = {ASSET_TAGS = (); }; };
+		9F3979451BB3461200591F69 /* StringTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3979441BB3461200591F69 /* StringTreeTests.swift */; settings = {ASSET_TAGS = (); }; };
+		9F3979491BB35ABA00591F69 /* StringTreeRemoveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3979481BB35ABA00591F69 /* StringTreeRemoveTests.swift */; settings = {ASSET_TAGS = (); }; };
+		9F39794B1BB35D7600591F69 /* StringTreeWithRemove.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F39794A1BB35D7600591F69 /* StringTreeWithRemove.swift */; settings = {ASSET_TAGS = (); }; };
 		9F802FAA1BB2461F00B35533 /* PostalCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F802FA91BB2461F00B35533 /* PostalCode.swift */; settings = {ASSET_TAGS = (); }; };
 		9F802FAC1BB2497E00B35533 /* PostalCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F802FAB1BB2497E00B35533 /* PostalCodeTests.swift */; settings = {ASSET_TAGS = (); }; };
 		9F802FAE1BB25CDB00B35533 /* UndoableTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F802FAD1BB25CDB00B35533 /* UndoableTreeTests.swift */; settings = {ASSET_TAGS = (); }; };
@@ -34,6 +38,10 @@
 		9F1CB5581BB0C6CF00CC50A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F1CB5611BB0C70200CC50A7 /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
 		9F1CB5631BB11E3200CC50A7 /* UndoableTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UndoableTree.swift; sourceTree = "<group>"; };
+		9F3979421BB345F700591F69 /* StringTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTree.swift; sourceTree = "<group>"; };
+		9F3979441BB3461200591F69 /* StringTreeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTreeTests.swift; sourceTree = "<group>"; };
+		9F3979481BB35ABA00591F69 /* StringTreeRemoveTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTreeRemoveTests.swift; sourceTree = "<group>"; };
+		9F39794A1BB35D7600591F69 /* StringTreeWithRemove.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringTreeWithRemove.swift; sourceTree = "<group>"; };
 		9F802FA91BB2461F00B35533 /* PostalCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostalCode.swift; sourceTree = "<group>"; };
 		9F802FAB1BB2497E00B35533 /* PostalCodeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostalCodeTests.swift; sourceTree = "<group>"; };
 		9F802FAD1BB25CDB00B35533 /* UndoableTreeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UndoableTreeTests.swift; sourceTree = "<group>"; };
@@ -83,6 +91,8 @@
 				9F1CB5611BB0C70200CC50A7 /* Tree.swift */,
 				9F1CB54C1BB0C6CE00CC50A7 /* Info.plist */,
 				9F1CB5631BB11E3200CC50A7 /* UndoableTree.swift */,
+				9F3979421BB345F700591F69 /* StringTree.swift */,
+				9F39794A1BB35D7600591F69 /* StringTreeWithRemove.swift */,
 			);
 			path = SwiftExercises;
 			sourceTree = "<group>";
@@ -94,6 +104,8 @@
 				9F1CB5581BB0C6CF00CC50A7 /* Info.plist */,
 				9F802FAB1BB2497E00B35533 /* PostalCodeTests.swift */,
 				9F802FAD1BB25CDB00B35533 /* UndoableTreeTests.swift */,
+				9F3979441BB3461200591F69 /* StringTreeTests.swift */,
+				9F3979481BB35ABA00591F69 /* StringTreeRemoveTests.swift */,
 			);
 			path = SwiftExercisesTests;
 			sourceTree = "<group>";
@@ -207,6 +219,8 @@
 			files = (
 				9F802FAA1BB2461F00B35533 /* PostalCode.swift in Sources */,
 				9F1CB5621BB0C70200CC50A7 /* Tree.swift in Sources */,
+				9F39794B1BB35D7600591F69 /* StringTreeWithRemove.swift in Sources */,
+				9F3979431BB345F700591F69 /* StringTree.swift in Sources */,
 				9F1CB5641BB11E3200CC50A7 /* UndoableTree.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -217,6 +231,8 @@
 			files = (
 				9F1CB5571BB0C6CF00CC50A7 /* TreeTests.swift in Sources */,
 				9F802FAE1BB25CDB00B35533 /* UndoableTreeTests.swift in Sources */,
+				9F3979491BB35ABA00591F69 /* StringTreeRemoveTests.swift in Sources */,
+				9F3979451BB3461200591F69 /* StringTreeTests.swift in Sources */,
 				9F802FAC1BB2497E00B35533 /* PostalCodeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

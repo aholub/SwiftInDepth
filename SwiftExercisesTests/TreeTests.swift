@@ -11,17 +11,41 @@ class TreeTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        t = Tree<String>();
+        t = Tree<String>( ["d", "b", "f", "a", "c", "e", "g"] )
     }
-    
-    override func tearDown() {
-        super.tearDown()
-        t = nil
+
+    func testTreeStructure() {
+        XCTAssertTrue( t._verifyChildren("d", left: "b", right: "f") )
+        XCTAssertTrue( t._verifyChildren("b", left: "a", right: "c") )
+        XCTAssertTrue( t._verifyChildren("f", left: "e", right: "g") )
+        XCTAssertTrue( t._verifyChildren("a", left: nil, right: nil) )
+        XCTAssertTrue( t._verifyChildren("c", left: nil, right: nil) )
+        XCTAssertTrue( t._verifyChildren("e", left: nil, right: nil) )
+        XCTAssertTrue( t._verifyChildren("g", left: nil, right: nil) )
+
+        t.add("h")
+
+        XCTAssertTrue( t._verifyChildren("d", left: "b", right: "f") )
+        XCTAssertTrue( t._verifyChildren("b", left: "a", right: "c") )
+        XCTAssertTrue( t._verifyChildren("f", left: "e", right: "g") )
+        XCTAssertTrue( t._verifyChildren("a", left: nil, right: nil) )
+        XCTAssertTrue( t._verifyChildren("c", left: nil, right: nil) )
+        XCTAssertTrue( t._verifyChildren("e", left: nil, right: nil) )
+        XCTAssertTrue( t._verifyChildren("g", left: nil, right: "h") )
+        XCTAssertTrue( t._verifyChildren("h", left: nil, right: nil) )
     }
-    
-    func testOneElement() {
-        XCTAssertNil( t.smallest() )
-        XCTAssertNil( t.largest()  )
+
+    func testArrayInit() {
+        let t = Tree<String>( ["a", "b", "c"] )
+        XCTAssertTrue( t.contains("a") && t.contains("b") && t.contains("c") )
+    }
+
+
+    func testZeroAndOneElement() {
+        t.clear()
+        XCTAssertTrue( t.isEmpty    )
+        XCTAssertNil ( t.smallest() )
+        XCTAssertNil ( t.largest()  )
 
         t.add( "x" );
 
@@ -30,16 +54,18 @@ class TreeTests: XCTestCase {
         XCTAssertTrue( t.largest()  == "x" )
     }
 
-    func testBalancedTree() {
+    func testContains() {
+        XCTAssertTrue ( t.contains("a") )
+        XCTAssertTrue ( t.contains("b") )
+        XCTAssertTrue ( t.contains("c") )
+        XCTAssertTrue ( t.contains("d") )
+        XCTAssertTrue ( t.contains("e") )
+        XCTAssertTrue ( t.contains("f") )
+        XCTAssertTrue ( t.contains("g") )
+        XCTAssertFalse( t.contains("h") )
+    }
 
-        t.add( "d" );
-        t.add( "b" );
-        t.add( "f" );
-        t.add( "a" );
-        t.add( "c" );
-        t.add( "e" );
-        t.add( "g" );
-
+    func testFindMatchOf() {
         XCTAssertTrue ( t.findMatchOf("a") == "a" )
         XCTAssertTrue ( t.findMatchOf("b") == "b" )
         XCTAssertTrue ( t.findMatchOf("c") == "c" )
@@ -50,47 +76,92 @@ class TreeTests: XCTestCase {
         XCTAssertNil  ( t.findMatchOf("h") )
     }
 
+    func testRemove() {
+        t.remove("c");
+        t.remove("b");
+        t.remove("e");
+        t.remove("f");
+        t.remove("d");
+
+        XCTAssertTrue( t.count == 2 )
+        XCTAssertTrue( t.contains("a") )
+        XCTAssertTrue( t.contains("g") )
+    }
+
     func testAsString() {
+        t.clear()
         t += "b"
         t += "a"
         t += "c"
         XCTAssertEqual(t.asString(","), "a,b,c" )
     }
 
-    func testRemove() {
-        t.add( "d" );
-        t.add( "b" );
-        t.add( "f" );
-        t.add( "a" );
-        t.add( "c" );
-        t.add( "e" );
-        t.add( "g" );
+    func testTraversal() {
+        var s = ""
+        t.traverse(.Inorder){s += $0; return true}
+        XCTAssertEqual(s, "abcdefg" )
 
-        XCTAssertEqual(t.asString(""), "abcdefg" )
+        s = ""
+        t.traverse(.Preorder){s += $0; return true}
+        XCTAssertEqual(s, "dbacfeg")
 
-        t.remove("d");
-        XCTAssertEqual(t.asString(""), "abcefg" )
+        s = ""
+        t.traverse(.Postorder){s += $0; return true}
+        XCTAssertEqual(s, "acbegfd" )
 
-        t.remove("a");
-        XCTAssertEqual(t.asString(""), "bcefg" )
+        s = ""
+        t.traverse{s += $0; return true}
+        XCTAssertEqual(s, "abcdefg" )
 
-        t.remove("g");
-        XCTAssertEqual(t.asString(""), "bcef" )
+        s = ""
+        t.traverse {
+            if( $0 <= "c") {
+                s += $0
+                return true // allow traversal to continue
+            }
+            return false // stop the traversal
+        }
+        XCTAssertEqual(s, "abc" )
+
+        s = ""
+        t.forEveryElement{ s += $0 }
+        XCTAssertEqual(s, "abcdefg" )
+
     }
 
-    func testArrayInit() {
-        let t: Tree<String> = ["b", "a", "c"]
-        XCTAssertEqual(t.asString(""), "abc" )
+    func testOperators() {
+        XCTAssertTrue( t <> "a" )
+        t -= "a"
+        XCTAssertFalse( t <> "a" )
+        t += "a"
+        XCTAssertTrue( t <> "a" )
+
+        XCTAssertEqual(t[0], "a" )
+        XCTAssertEqual(t[6], "g" )
+
+        // No way to test an exception toss on overflow
+        // because that's not a catchable exception. Hopefully
+        // Apple will fix that at some point. Could get arround
+        // that by returning an auto-unwrapping optional from the
+        // subscript method, but that would push the error downstream
+        // to the first time the item was used, which would make the
+        // bug harder to find.
+    }
+
+    func testFilterMapReduce() {
+        let result = t.filter{ $0 <= "d" }
+                      .map   { return $0.uppercaseString }
+                      .reduce("-"){ $0 + $1 }
+
+        XCTAssertEqual(result, "-ABCD")
     }
 
     func testIterators() {
-        let t: Tree<String> = ["b", "a", "c"]
-
         var s = ""
         for element in t {
             s += element
         }
-        XCTAssertEqual( s, "abc" )
+        XCTAssertEqual( s, "abcdefg" )
     }
 
     func testSafeTree() {

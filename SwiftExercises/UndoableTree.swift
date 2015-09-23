@@ -81,4 +81,7 @@ public class UndoableTree<T: Comparable> : Collection, Undoable {
     public func traverse( iterator: (T)->Bool ) {
         return data.traverse(iterator)
     }
+    public func forEveryElement(iterator: (T)->()) {
+        return data.forEveryElement(iterator)
+    }
 }
