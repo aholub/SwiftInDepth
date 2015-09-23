@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F1CB54B1BB0C6CE00CC50A7 /* SwiftExercises.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F1CB54A1BB0C6CE00CC50A7 /* SwiftExercises.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F1CB5521BB0C6CF00CC50A7 /* SwiftExercises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1CB5471BB0C6CE00CC50A7 /* SwiftExercises.framework */; settings = {ASSET_TAGS = (); }; };
-		9F1CB5571BB0C6CF00CC50A7 /* SwiftExercisesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5561BB0C6CF00CC50A7 /* SwiftExercisesTests.swift */; };
+		9F1CB5571BB0C6CF00CC50A7 /* TreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5561BB0C6CF00CC50A7 /* TreeTests.swift */; };
 		9F1CB5621BB0C70200CC50A7 /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5611BB0C70200CC50A7 /* Tree.swift */; settings = {ASSET_TAGS = (); }; };
+		9F1CB5641BB11E3200CC50A7 /* UndoableTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CB5631BB11E3200CC50A7 /* UndoableTree.swift */; settings = {ASSET_TAGS = (); }; };
+		9F802FAA1BB2461F00B35533 /* PostalCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F802FA91BB2461F00B35533 /* PostalCode.swift */; settings = {ASSET_TAGS = (); }; };
+		9F802FAC1BB2497E00B35533 /* PostalCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F802FAB1BB2497E00B35533 /* PostalCodeTests.swift */; settings = {ASSET_TAGS = (); }; };
+		9F802FAE1BB25CDB00B35533 /* UndoableTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F802FAD1BB25CDB00B35533 /* UndoableTreeTests.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,12 +28,15 @@
 
 /* Begin PBXFileReference section */
 		9F1CB5471BB0C6CE00CC50A7 /* SwiftExercises.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftExercises.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9F1CB54A1BB0C6CE00CC50A7 /* SwiftExercises.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftExercises.h; sourceTree = "<group>"; };
 		9F1CB54C1BB0C6CE00CC50A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F1CB5511BB0C6CF00CC50A7 /* SwiftExercisesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftExercisesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9F1CB5561BB0C6CF00CC50A7 /* SwiftExercisesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftExercisesTests.swift; sourceTree = "<group>"; };
+		9F1CB5561BB0C6CF00CC50A7 /* TreeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeTests.swift; sourceTree = "<group>"; };
 		9F1CB5581BB0C6CF00CC50A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F1CB5611BB0C70200CC50A7 /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
+		9F1CB5631BB11E3200CC50A7 /* UndoableTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UndoableTree.swift; sourceTree = "<group>"; };
+		9F802FA91BB2461F00B35533 /* PostalCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostalCode.swift; sourceTree = "<group>"; };
+		9F802FAB1BB2497E00B35533 /* PostalCodeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostalCodeTests.swift; sourceTree = "<group>"; };
+		9F802FAD1BB25CDB00B35533 /* UndoableTreeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UndoableTreeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,9 +79,10 @@
 		9F1CB5491BB0C6CE00CC50A7 /* SwiftExercises */ = {
 			isa = PBXGroup;
 			children = (
+				9F802FA91BB2461F00B35533 /* PostalCode.swift */,
 				9F1CB5611BB0C70200CC50A7 /* Tree.swift */,
-				9F1CB54A1BB0C6CE00CC50A7 /* SwiftExercises.h */,
 				9F1CB54C1BB0C6CE00CC50A7 /* Info.plist */,
+				9F1CB5631BB11E3200CC50A7 /* UndoableTree.swift */,
 			);
 			path = SwiftExercises;
 			sourceTree = "<group>";
@@ -83,8 +90,10 @@
 		9F1CB5551BB0C6CF00CC50A7 /* SwiftExercisesTests */ = {
 			isa = PBXGroup;
 			children = (
-				9F1CB5561BB0C6CF00CC50A7 /* SwiftExercisesTests.swift */,
+				9F1CB5561BB0C6CF00CC50A7 /* TreeTests.swift */,
 				9F1CB5581BB0C6CF00CC50A7 /* Info.plist */,
+				9F802FAB1BB2497E00B35533 /* PostalCodeTests.swift */,
+				9F802FAD1BB25CDB00B35533 /* UndoableTreeTests.swift */,
 			);
 			path = SwiftExercisesTests;
 			sourceTree = "<group>";
@@ -96,7 +105,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F1CB54B1BB0C6CE00CC50A7 /* SwiftExercises.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +205,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F802FAA1BB2461F00B35533 /* PostalCode.swift in Sources */,
 				9F1CB5621BB0C70200CC50A7 /* Tree.swift in Sources */,
+				9F1CB5641BB11E3200CC50A7 /* UndoableTree.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,7 +215,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F1CB5571BB0C6CF00CC50A7 /* SwiftExercisesTests.swift in Sources */,
+				9F1CB5571BB0C6CF00CC50A7 /* TreeTests.swift in Sources */,
+				9F802FAE1BB25CDB00B35533 /* UndoableTreeTests.swift in Sources */,
+				9F802FAC1BB2497E00B35533 /* PostalCodeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +398,7 @@
 				9F1CB55D1BB0C6CF00CC50A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9F1CB55E1BB0C6CF00CC50A7 /* Build configuration list for PBXNativeTarget "SwiftExercisesTests" */ = {
 			isa = XCConfigurationList;
@@ -394,6 +407,7 @@
 				9F1CB5601BB0C6CF00CC50A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

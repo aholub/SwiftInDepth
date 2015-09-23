@@ -42,14 +42,23 @@ public protocol Collection {
     func traverse   ( iterator: (T)->Bool   )
 }
 
+//----------------------------------------------------------------------
 public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection
 {
     private var root: Node<T>?
-    private var arrayVersion:[T]?
-    
     private var size:    Int = 0;
     public var  count:   Int  { return size }
 
+    //----------------------------------------------------------------------
+    /// arrayVersion is used by the [] operator. [] is implemented in an
+    /// extenstion, but you can declare new fields (stored properties) in
+    /// extenstions. If it's nill, no array version exists, otherwise it
+    /// points at an array version of the tree. It's set to nill if the
+    /// tree is modified (by an add() or remove() call, for example).
+    ///
+    private var arrayVersion:[T]?
+
+    //----------------------------------------------------------------------
     public var  isEmpty: Bool { return root == nil; }
     
     //----------------------------------------------------------------------
@@ -309,6 +318,28 @@ extension Tree {
 func += <T>( left: Tree<T>, right: T ) {
     left.add(right)
 }
+
+func -= <T>( left: Tree<T>, right: T ) {
+    left.remove(right)
+}
+
+extension Tree {
+    subscript (index:Int)->T {      // read-only access, so explicit get{...} not
+        return asArray()[index]     // required
+    }
+
+    public func asArray() -> [T] {
+        if let array = arrayVersion {
+            return array
+        }
+        else {
+            arrayVersion = []
+            traverse( .Inorder ){ self.arrayVersion!.append($0); return true }
+        }
+        return arrayVersion!
+    }
+}
+
 //----------------------------------------------------------------------
 extension Tree {
     public func filter( okay: (T)->Bool ) -> Tree<T> {
@@ -344,22 +375,6 @@ extension Tree {
 }
 //======================================================================
 extension Tree: SequenceType {
-
-    subscript (index:Int)->T {      // read-only access, so explicit get{...} not
-        return asArray()[index]     // required
-    }
-
-    public func asArray() -> [T] {
-        if let array = arrayVersion {
-            return array
-        }
-        else {
-            arrayVersion = []
-            traverse( .Inorder ){ self.arrayVersion!.append($0); return true }
-        }
-        return arrayVersion!
-    }
-
     public func generate() -> TreeGenerator<T> {
         return TreeGenerator<T>( items: asArray() )
     }
