@@ -25,6 +25,27 @@ Apple describes the testing system at: http://apple.co/1Mr3XFE .
 My solutions all come with tests that use the XCT framework.
 
 ======================================================================
+Getting the code
+
+To install the solutions, clone the git repository to your own hard drive.
+The following git request puts it in the SwiftInDepth subdirectory of the
+current directory:
+
+	git clone http://github.com/aholub/SwiftInDepth SwiftInDepth
+
+The cloned repository is an XCode project, so after issuing the
+above request, you should be able to run it in Xcode from the
+command line with:
+
+	cd SwiftInDepth
+    open SwiftExercises.xcodeproj
+
+If that doesn't work for some reason, all of the source code files
+are just source-code files, so you can import them into a new, but
+empty XCode project using  File->Add Files To "MyProject" (or whatever
+your project is).
+
+======================================================================
 Asking Questions:
 
 Please address any questions to the Discussion group associated with
@@ -164,6 +185,16 @@ range 0-99999; the second in the range 0-9999
 
 My solution is in:
     PostalCode.swift PostalCodeTests.swift
+
+
+
+
+**********************************************************************
+THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
+**********************************************************************
+
+
+
 
 ======================================================================
 After Module 4
