@@ -77,15 +77,30 @@ class TreeTests: XCTestCase {
     }
 
     func testRemove() {
-        t.remove("c");
-        t.remove("b");
-        t.remove("e");
-        t.remove("f");
-        t.remove("d");
+        try! t.remove("c");
+        try! t.remove("b");
+        try! t.remove("e");
+        try! t.remove("f");
+        try! t.remove("d");
 
         XCTAssertTrue( t.count == 2 )
         XCTAssertTrue( t.contains("a") )
         XCTAssertTrue( t.contains("g") )
+
+        do {
+            try t.remove("xxxx")
+            XCTFail()
+        }
+        catch TreeError.Empty {}
+        catch { XCTFail() }
+
+        do {
+            t.clear()
+            try t.remove("xxxx")
+            XCTFail()
+        }
+        catch TreeError.Empty {}
+        catch { XCTFail() }
     }
 
     func testAsString() {

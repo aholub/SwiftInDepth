@@ -263,7 +263,8 @@ After Moudle 5 (Functions and CLosures)
 ======================================================================
 3:  (Closures)
 
-    t.asString ( delim: String = " " )
+Add the following methods to your Tree
+
     t.traverse { print("\($0)"); return true }
 
     t.forEveryElement{
@@ -273,6 +274,8 @@ After Moudle 5 (Functions and CLosures)
     public func  filter( okay: (T)->Bool ) -> Tree<T> 
     public func  map( transform: (T)->T ) -> Tree<T> 
     public func  reduce<U>(first: U, combine: (U, T) -> U) -> U
+
+    t.asString ( delim: String = " " )
 
 ======================================================================
 After Modules 6 and 7 (Classes)

@@ -31,18 +31,18 @@ public class UndoableTree<T: Comparable> : Collection, Undoable {
 
     public func add( element: T ) -> Bool {
         undoStack.append(
-            ( undo:{ data.remove(element) },
-              redo:{ data.add   (element) } )
+            ( undo:{ try! data.remove(element) },
+              redo:{      data.add   (element) } )
         )
         return data.add(element)
     }
 
     public func remove( lookingFor: T ) -> T? {
         undoStack.append(
-            ( undo:{ data.add   (lookingFor) },
-              redo:{ data.remove(lookingFor) } )
+            ( undo:{      data.add   (lookingFor) },
+              redo:{ try! data.remove(lookingFor) } )
         )
-        return data.remove(lookingFor)
+        return try! data.remove(lookingFor)
     }
 
     /// Undo an add or remove. It's harmless to call this

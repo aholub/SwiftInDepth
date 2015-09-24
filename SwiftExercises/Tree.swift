@@ -26,7 +26,7 @@ public protocol Collection {
     /// item is locked when it's added and unlocked when it's removed.
     
     func add( element: T        ) -> Bool
-    func remove( lookingFor: T  ) -> T?
+    func remove( lookingFor: T  ) throws -> T?
     
     /// Find a matching element (using Comparable overrides) and return it.
     /// Since this method makes it possible for someone to destroy the
@@ -43,9 +43,12 @@ public protocol Collection {
 }
 
 //======================================================================
+// Can't nest enums in a generic type!
 
 public enum Ordering { case Inorder, Postorder, Preorder }
 public enum Direction{ case Left, Right }
+
+public enum TreeError : ErrorType { case Empty }    // used by remove()
 
 //======================================================================
 public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
@@ -143,7 +146,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
 // Remove an item from the tree, returning nil if it's not there and the
     /// item if it is
     
-    public func remove( lookingFor: T ) -> T? {
+    public func remove( lookingFor: T ) throws -> T? {
         
         if let (target, parent) = doFind(lookingFor, current:root, parent:nil) {
             
@@ -161,7 +164,7 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
             --size
             return target.element
         }
-        return nil;
+        throw TreeError.Empty
     }
 
     /// Replace the node on the specified side of the parent with the specified node (can be nil).
@@ -344,7 +347,7 @@ func += <T>( left: Tree<T>, right: T ) {
 }
 
 func -= <T>( left: Tree<T>, right: T ) {
-    left.remove(right)
+    try! left.remove(right)
 }
 
 /// Contains operator:
@@ -474,8 +477,8 @@ public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
         return super.add(element)
     }
     
-    public override func remove( lookingFor: T  ) -> T? {
-        let found = super.remove(lookingFor)
+    public override func remove( lookingFor: T  ) throws -> T? {
+        let found = try! super.remove(lookingFor)
         if found != nil {
             found?.unlock()
         }
