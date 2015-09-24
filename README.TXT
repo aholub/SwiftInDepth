@@ -1,11 +1,36 @@
 ======================================================================
+Exercises for Allen Holub's Pluralsight class: Swift In Depth
+	http://www.pluralsight.com/courses/swift-in-depth
+======================================================================
+
+If you haven't yet, download XCode 7 from the App Store. It's no
+longer in Beta, and most (but not all, unfortunately) of the bugs
+I was running up against in my video have been fixed. The testing
+frameworks work well in the release version. All of my solutions
+to the following problems are written in Swift 2, so they won't
+compiler with earlier versions of XCode.
+
+======================================================================
 After Module 3 
 ======================================================================
-1: Build a binary tree that holds String values. Use this typealias for
-   the stored-element type. Don't hard code String into your
-   implementation
+1: Build a simple binary tree that holds String values. 
 
+   Binary trees are described in Robert Horvick's Pluralsight Class: "Algorithms
+   and Data Structures---Part 1" (http://www.pluralsight.com/courses/ads-part1).
+   A simple binary tree is not an ideal data structure (AVL trees are better,
+   for example), but this is a great exercise for understanding how optionals
+   work (the tree root and node child pointers have to be options so that you can
+   use nil to represent no descendants). Don't complicate things by implementing
+   an AVL or Red/Black Tree. The point, after all, is to learn Swift, not build a
+   Tree class.
+
+   Use the following typealias for the stored-element type. Don't hard code String
+   into your implementation:
+
+	class StringTree {
 		typealias T = String   
+		//...
+	}
 
 	Both of the following statements should create trees:
 
@@ -30,7 +55,7 @@ After Module 3
 											     element that matches lookingFor. Use == for
 												 comparison)
 
-		The last to methods should call the following "workhorse" method to do the
+		The last two methods should call the following "workhorse" method to do the
 		actual searching (I'm assuming that this method is recursive):
 
 		func doFind( lookingFor: T,		// the value you're looking for
@@ -47,6 +72,10 @@ After Module 3
 		you'd call:
 
 			doFind("x", current: root, parent: nil)
+
+	You should also build test classes for your tree. If you haven't done that in
+	XCode, Apple describes the testing system at: http://apple.co/1Mr3XFE
+
 
 	My solution is in:
 		StringTree.swift StringTreeTests.swift

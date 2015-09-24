@@ -3,13 +3,10 @@
 
 import Foundation
 
-// The compiler will pull this typealias out of StringTree.swift. 
-// Add it back of you move this file somewhere
-//
-// typealias T = String
-
 class StringTreeWithRemove
 {
+    typealias T = String
+
     private var root:   Node?
     private var size:   Int = 0;
     var  count:  Int  { return size }
@@ -178,8 +175,8 @@ class StringTreeWithRemove
         var rightChild: Node?
         var leftChild:  Node?
         
-        let element: T
-        init( _ element: T ) {
+        let element: StringTreeWithRemove.T
+        init( _ element: StringTreeWithRemove.T ) {
             self.element = element
         }
 

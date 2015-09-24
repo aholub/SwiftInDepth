@@ -1,10 +1,10 @@
 import Cocoa
 import Foundation
 
-typealias T = String
-
 class StringTree
 {
+    typealias T = String
+
     private var root:   Node?
     private var size:   Int = 0;
     var  count:  Int  { return size }
@@ -137,8 +137,8 @@ class StringTree
         var rightChild: Node?
         var leftChild:  Node?
 
-        let element: T
-        init( _ element: T ) {
+        let element: StringTree.T
+        init( _ element: StringTree.T ) {
             self.element = element
         }
     }
