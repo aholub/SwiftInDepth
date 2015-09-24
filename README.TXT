@@ -1,102 +1,127 @@
 ======================================================================
 Exercises for Allen Holub's Pluralsight class: Swift In Depth
-	http://www.pluralsight.com/courses/swift-in-depth
+    http://www.pluralsight.com/courses/swift-in-depth
 ======================================================================
+
+Allen Holub
+http://www.holub.com
+allen@holub.com
+@allenholub
+
+======================================================================
+Preliminaries:
 
 If you haven't yet, download XCode 7 from the App Store. It's no
 longer in Beta, and most (but not all, unfortunately) of the bugs
 I was running up against in my video have been fixed. The testing
 frameworks work well in the release version. All of my solutions
-to the following problems are written in Swift 2, so they won't
-compiler with earlier versions of XCode.
+to the following problems are written in Swift-2, so they won't
+compile with earlier versions of XCode. I recommend that you build
+your solutions as XCode projects rather than using the Playground.
+
+You should also build test classes for these assignments and use your
+tests to verify that everything works. If you haven't done that before,
+Apple describes the testing system at: http://apple.co/1Mr3XFE .
+My solutions all come with tests that use the XCT framework.
+
+======================================================================
+Asking Questions:
+
+Please address any questions to the Discussion group associated with
+my class:
+
+    http://www.pluralsight.com/courses/discussion/swift-in-depth
+
+That way we can all benefit. If you send me email, I'll most likely just
+copy it to the discussion group and post my answer there. (I'll write
+back to you when I post the reply). If you're using a pirated version
+of my class to learn Swift, so can't get at the Discussions,
+I have no sympathy for your plight. Sorry.
 
 ======================================================================
 After Module 3 
 ======================================================================
 1: Build a simple binary tree that holds String values. 
 
-   Binary trees are described in Robert Horvick's Pluralsight Class: "Algorithms
-   and Data Structures---Part 1" (http://www.pluralsight.com/courses/ads-part1).
-   A simple binary tree is not an ideal data structure (AVL trees are better,
-   for example), but this is a great exercise for understanding how optionals
-   work (the tree root and node child pointers have to be options so that you can
-   use nil to represent no descendants). Don't complicate things by implementing
-   an AVL or Red/Black Tree. The point, after all, is to learn Swift, not build a
-   Tree class.
+Binary trees are described in Robert Horvick's Pluralsight Class: "Algorithms
+and Data Structures---Part 1" (http://www.pluralsight.com/courses/ads-part1).
+A simple binary tree is not an ideal data structure (AVL trees are better,
+for example), but this is a great exercise for understanding how optionals
+work. (The tree root and child pointers in the node have to be options so that
+you can use nil to represent no descendants.) Don't complicate things by
+implementing an AVL or Red/Black Tree unless you really relish the challenge.
+The point, after all, is to learn Swift, not build a Tree class.
 
-   Use the following typealias for the stored-element type. Don't hard code String
-   into your implementation:
+Use the following typealias for the stored-element type. Don't hard code
+String into your implementation:
 
-	class StringTree {
-		typealias T = String   
-		//...
-	}
+class StringTree {
+    typealias T = String   
+    //...
+}
 
-	Both of the following statements should create trees:
+Both of the following statements should create trees:
 
-		var t1 = StringTree()
-		var t2 = StringTree( ["a", "b", "c"] )
+    var t1 = StringTree()
+    var t2 = StringTree( ["a", "b", "c"] )
 
-	You should support the following methods and computed properties:
+You should support the following methods and computed properties:
 
-		isEmpty 			(read-only property)
-		count 				(read-only property. Number of elements in the tree)
-		clear()				(remove all elements)
-		smallest() -> T?	(return the smallest element, nil if the tree is empty)
-		largest()  -> T?	(return the largest element, nil if the tree is empty)
+    isEmpty             (read-only property)
+    count               (read-only property. Number of elements in the tree)
+    clear()             (remove all elements)
+    smallest() -> T?    (return the smallest element, nil if the tree is empty)
+    largest()  -> T?    (return the largest element, nil if the tree is empty)
 
-		add(element:T)						    (add the specified string to the tree)
+    add(element:T)                      (add the specified string to the tree)
 
-		findMatchOf(lookingFor:T ) -> T?		(return the contained string that matches
-											     the lookingFor argument. Use == for
-												 comparison)
+    findMatchOf(lookingFor:T ) -> T?    (return the contained string that matches
+                                         the lookingFor argument. Use == for
+                                         comparison)
 
-		contains( lookingFor: T) -> Bool		(return true if the tree contains an
-											     element that matches lookingFor. Use == for
-												 comparison)
+    contains( lookingFor: T) -> Bool    (return true if the tree contains an
+                                         element that matches lookingFor. Use == for
+                                         comparison)
 
-		The last two methods should call the following "workhorse" method to do the
-		actual searching (I'm assuming that this method is recursive):
+    The last two methods should call the following "workhorse" method to do the
+    actual searching (I'm assuming that this method is recursive):
 
-		func doFind( lookingFor: T,		// the value you're looking for
-					 current: Node?,	// with the search starting here
-					 parent: Node? )	// and this is the parent of the "current" node.
-					 					// (nil if "current" is the root node)
-					    -> (found: Node, parent: Node?)?
-										// Return a tuple that holds the matching node
-										// and its parent (or nil if the match was in
-										// the root node) Return nil if you didn't find
-										// the value you were looking for.
+    func doFind( lookingFor: T,     // the value you're looking for
+                 current: Node?,    // with the search starting here
+                 parent: Node? )    // and this is the parent of the "current" node.
+                                    // (nil if "current" is the root node)
+                    -> (found: Node, parent: Node?)?
+                                    // Return a tuple that holds the matching node
+                                    // and its parent (or nil if the match was in
+                                    // the root node) Return nil if you didn't find
+                                    // the value you were looking for.
 
-		For example, to find the node "x," starting the search at the root node of the tree,
-		you'd call:
+    For example, to find the node "x," starting the search at the root node of the tree,
+    you'd call:
 
-			doFind("x", current: root, parent: nil)
+        doFind("x", current: root, parent: nil)
 
-	You should also build test classes for your tree. If you haven't done that in
-	XCode, Apple describes the testing system at: http://apple.co/1Mr3XFE
+My solution is in:
+    StringTree.swift StringTreeTests.swift
 
-
-	My solution is in:
-		StringTree.swift StringTreeTests.swift
 
 2 (optional. This is hard, so take it as a challenge). Add:
 
-		remove( lookingFor: T ) -> T?
+        remove( lookingFor: T ) -> T?
 
-	My solution is in:
-		StringTreeWithRemove.swift StringTreeRemoveTests.swift
+My solution is in:
+    StringTreeWithRemove.swift StringTreeRemoveTests.swift
 
 
 3:
-	Postal Code Enum
+    Postal Code Enum
 
 ======================================================================
 After Module 4
 ======================================================================
 
 Add:
-	_verifyChildren( parent: T, expectedLeft: T?, expectedRight: T? ) -> Bool
+    _verifyChildren( parent: T, expectedLeft: T?, expectedRight: T? ) -> Bool
 
 that verifies that the two children of the node with the given key (parent) have
 the expected values. expectedLeft and expectedRight can both be nil.
@@ -119,11 +144,11 @@ You can do all checking for these conditions with
 a switch with four case statements in it, one for each of the following
 situations:
 
-left  		right
-nil			nil
-not Nil		nil
-nil			not Nil
-not Nil		not Nil
+left        right
+nil         nil
+not Nil     nil
+nil         not Nil
+not Nil     not Nil
 
 and that same case statment can compare values when necessary.
 
@@ -151,18 +176,18 @@ from an empty tree.
 ======================================================================
 After Moudle 5 (Functions and CLosures)
 ======================================================================
-3:	(Closures)
+3:  (Closures)
 
-	t.asString ( delim: String = " " )
-	t.traverse { print("\($0)"); return true }
+    t.asString ( delim: String = " " )
+    t.traverse { print("\($0)"); return true }
 
-	t.forEveryElement{
-		print("\($0)")
-	}
+    t.forEveryElement{
+        print("\($0)")
+    }
 
-	public func  filter( okay: (T)->Bool ) -> Tree<T> 
-	public func  map( transform: (T)->T ) -> Tree<T> 
-	public func  reduce<U>(first: U, combine: (U, T) -> U) -> U
+    public func  filter( okay: (T)->Bool ) -> Tree<T> 
+    public func  map( transform: (T)->T ) -> Tree<T> 
+    public func  reduce<U>(first: U, combine: (U, T) -> U) -> U
 
 ======================================================================
 After Modules 6 and 7 (Classes)
@@ -189,7 +214,7 @@ both Comparable and Lockable. The objects should be locked when
 added to the tree and unlocked when removed. Attempts to modify
 locked objects should result in an exception toss.
 
-	public protocol Lockable {
+    public protocol Lockable {
     func lock   ()->()
     func unlock ()->()
 
@@ -218,11 +243,11 @@ After Module 10 (Customizing Swift)
 ======================================================================
 6. Operator overloads (add using the Extension mechanism )
 
-	let t: Tree<String> = [ "a", "b", "c" ]
-	
-	t += "d"
-	t -= "a"
-	if( t <> "a" ) {...}   // t contains "a"
+    let t: Tree<String> = [ "a", "b", "c" ]
+    
+    t += "d"
+    t -= "a"
+    if( t <> "a" ) {...}   // t contains "a"
 
-	let x = t[1]		(read only. t[1] = "x" shouldn't owrk)
+    let x = t[1]        (read only. t[1] = "x" shouldn't owrk)
 
