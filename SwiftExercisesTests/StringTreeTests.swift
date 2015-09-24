@@ -14,27 +14,6 @@ class StringTreeTests: XCTestCase {
         t = StringTree( ["d", "b", "f", "a", "c", "e", "g"] )
     }
 
-    func testTreeStructure() {
-        XCTAssertTrue( t._verifyChildren("d", left: "b", right: "f") )
-        XCTAssertTrue( t._verifyChildren("b", left: "a", right: "c") )
-        XCTAssertTrue( t._verifyChildren("f", left: "e", right: "g") )
-        XCTAssertTrue( t._verifyChildren("a", left: nil, right: nil) )
-        XCTAssertTrue( t._verifyChildren("c", left: nil, right: nil) )
-        XCTAssertTrue( t._verifyChildren("e", left: nil, right: nil) )
-        XCTAssertTrue( t._verifyChildren("g", left: nil, right: nil) )
-
-        t.add("h")
-
-        XCTAssertTrue( t._verifyChildren("d", left: "b", right: "f") )
-        XCTAssertTrue( t._verifyChildren("b", left: "a", right: "c") )
-        XCTAssertTrue( t._verifyChildren("f", left: "e", right: "g") )
-        XCTAssertTrue( t._verifyChildren("a", left: nil, right: nil) )
-        XCTAssertTrue( t._verifyChildren("c", left: nil, right: nil) )
-        XCTAssertTrue( t._verifyChildren("e", left: nil, right: nil) )
-        XCTAssertTrue( t._verifyChildren("g", left: nil, right: "h") )
-        XCTAssertTrue( t._verifyChildren("h", left: nil, right: nil) )
-    }
-
     func testArrayInit() {
         let t = StringTree( ["a", "b", "c"] )
         XCTAssertTrue( t.contains("a") && t.contains("b") && t.contains("c") )

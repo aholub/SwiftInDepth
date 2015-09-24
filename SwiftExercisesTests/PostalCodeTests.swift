@@ -1,10 +1,5 @@
-//
 //  PostalCodeTests.swift
-//  SwiftExercises
-//
-//  Created by allen on 9/22/15.
-//  Copyright © 2015 allen. All rights reserved.
-//
+//  Copyright © 2015 Allen Holub. All rights reserved.
 
 import XCTest
 @testable import SwiftExercises
@@ -14,7 +9,7 @@ class PostalCodeTests: XCTestCase {
     func testPostalCodeAsString () {
         XCTAssertEqual( PostalCode.US(12345,6789).asString(), "12345-6789" )
         XCTAssertEqual( PostalCode.CA("A0A 0A0" ).asString(), "A0A 0A0" )
-        XCTAssertEqual( PostalCode.CA("SW1A 1AA").asString(), "SW1A 1AA" )
+        XCTAssertEqual( PostalCode.UK("SW1A 1AA").asString(), "SW1A 1AA" )
     }
 
     func testCountryRawValues() {

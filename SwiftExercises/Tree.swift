@@ -139,8 +139,8 @@ public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
         arrayVersion = nil; // force a rebild the next time it's needed
         return true
     }
-    
-    /// Remove an item from the tree, returning nil if it's not there and the
+   
+// Remove an item from the tree, returning nil if it's not there and the
     /// item if it is
     
     public func remove( lookingFor: T ) -> T? {

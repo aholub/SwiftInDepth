@@ -27,7 +27,7 @@ class StringTree
         }
     }
 
-    init (){} // nothing to do, but it's shadowed by [T] version
+    init (){} // nothing to do, but it's shadowed by init([T])
     //----------------------------------------------------------------------
     /// Add a new element. Return false (and do nothing) if the element
     /// is already there
@@ -113,22 +113,6 @@ class StringTree
                     /* == */                 (c, parent)
         }
         return nil
-    }
-
-    //======================================================================
-    // Test methods (internal access)
-
-    func _verifyChildren( parent: T, left: T?, right: T? ) -> Bool {
-        guard let (found, _) = doFind(parent, current:root, parent:nil)
-        else { return false }
-
-        switch (found.leftChild, found.rightChild ) {
-            case (nil,   nil  ) where left==nil         && right==nil          : return true
-            case (nil,   let r) where left==nil         && right!==r?.element  : return true
-            case (let l, nil  ) where left!==l?.element && right==nil          : return true
-            case (let l, let r) where left!==l?.element && right!==r?.element  : return true
-            default                                                            : return false
-        }
     }
 
     //======================================================================
