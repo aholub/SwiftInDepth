@@ -84,15 +84,16 @@ You should support the following methods and computed properties:
                                          comparison)
 
     The last two methods should call the following "workhorse" method to do the
-    actual searching (I'm assuming that this method is recursive):
+    actual searching (I'm assuming that this method is recursive). This method
+    will be handy should you implement remove, and is a good exercise in optionals
+    even if you don't:
 
     func doFind( lookingFor: T,     // the value you're looking for
                  current: Node?,    // with the search starting here
                  parent: Node? )    // and this is the parent of the "current" node.
                                     // (nil if "current" is the root node)
-                    -> (found: Node, parent: Node?)?
-                                    // Return a tuple that holds the matching node
-                                    // and its parent (or nil if the match was in
+        -> (found: Node,            // Return an optional tuple that holds the matching node
+            parent: Node?)?         // and its parent (or nil if the matching node was
                                     // the root node) Return nil if you didn't find
                                     // the value you were looking for.
 
@@ -104,8 +105,9 @@ You should support the following methods and computed properties:
 My solution is in:
     StringTree.swift StringTreeTests.swift
 
-
+----------------------------------------------------------------------
 2 (optional. This is hard, so take it as a challenge). Add:
+----------------------------------------------------------------------
 
         remove( lookingFor: T ) -> T?
 
@@ -113,8 +115,55 @@ My solution is in:
     StringTreeWithRemove.swift StringTreeRemoveTests.swift
 
 
-3:
-    Postal Code Enum
+----------------------------------------------------------------------
+3: Enums
+----------------------------------------------------------------------
+
+First, create an enum that represents a US, Canadian, or UK postal code:
+
+        let usCode = PostalCode.US(12345,6789)
+        let caCode = PostalCode.CA("A0A 0A0" )
+        let ukCode = PostalCode.UK("SW1A 1AA")
+
+Implement these with an asString() method that returns a string
+representation of the code. For example, given the earlier definitions,
+usCode.asString() evaluates to "12345-6789"
+
+Next, Create a second enum that represents countries. These must
+use string raw values that work as follows:
+
+        Country.USA.rawValue == "United States"
+        Country.UK.rawValue  == "United Kingdom" 
+        Country.CA.rawValue  == "Canada"
+
+The Country should be able to produce a postal code as follows:
+
+    Country.USA.getPostalCode(12345,6789)
+    Country.CA.getPostalCode("A0A 0A0")
+    Country.UK.getPostalCode("SW1A 1AA")
+
+These methods either return an appropriate PostalCode object, or
+they return nil if the arguments to the methods do not form
+a legitimate postal code for the specified country.
+
+In particular, if A is a letter and d is a digit:
+
+Canadian postal codes take the form
+    AdA dAd
+
+UK postal codes take one of these forms:
+    AA0A dAA
+    AdA dAA
+    Ad dAA
+    Add dAA
+    AAd dAA
+    AAdd dAA
+
+US postal codes are two numbers. The first must be in the
+range 0-99999; the second in the range 0-9999
+
+My solution is in:
+    PostalCode.swift PostalCodeTests.swift
 
 ======================================================================
 After Module 4
