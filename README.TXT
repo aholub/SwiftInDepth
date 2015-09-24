@@ -31,13 +31,13 @@ To install the solutions, clone the git repository to your own hard drive.
 The following git request puts it in the SwiftInDepth subdirectory of the
 current directory:
 
-	git clone http://github.com/aholub/SwiftInDepth SwiftInDepth
+    git clone http://github.com/aholub/SwiftInDepth SwiftInDepth
 
 The cloned repository is an XCode project, so after issuing the
 above request, you should be able to run it in Xcode from the
 command line with:
 
-	cd SwiftInDepth
+    cd SwiftInDepth
     open SwiftExercises.xcodeproj
 
 If that doesn't work for some reason, all of the source code files
@@ -187,15 +187,6 @@ My solution is in:
     PostalCode.swift PostalCodeTests.swift
 
 
-
-
-**********************************************************************
-THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
-**********************************************************************
-
-
-
-
 ======================================================================
 After Module 4
 ======================================================================
@@ -204,7 +195,8 @@ Add:
     _verifyChildren( parent: T, expectedLeft: T?, expectedRight: T? ) -> Bool
 
 that verifies that the two children of the node with the given key (parent) have
-the expected values. expectedLeft and expectedRight can both be nil.
+the expected values. expectedLeft and expectedRight can both be nil (in the
+case of a leaf node).
 
 For example, given a balanced tree created by inserting the nodes "b" "a"
 and "c" in that order, the following should all evaluate true:
@@ -218,11 +210,10 @@ if you then add the node "d" to the tree, the following will hold
 _verifyChildren( "b", "a", "c", )
 _verifyChildren( "a", nil, nil )
 _verifyChildren( "c", nil, "d" )
-_verifyChildren( "d", nil, "d" )
+_verifyChildren( "d", nil, nil )
 
-You can do all checking for these conditions with
-a switch with four case statements in it, one for each of the following
-situations:
+You must do all checking for these conditions with a switch with four
+case statements in it, one for each of the following situations:
 
 left        right
 nil         nil
@@ -230,7 +221,7 @@ not Nil     nil
 nil         not Nil
 not Nil     not Nil
 
-and that same case statment can compare values when necessary.
+That same case should compare values when necessary using a "where" clause.
 
 In other words, a single case statement is triggered when both 
 expectedRight and expectedLeft are nil, and that same case statement
@@ -249,8 +240,22 @@ values in the indicated order is structured correctly:
 
 ----------------------------------------------------------------------
 
-Modify remove to throw an Exception if you try to remove an item
-from an empty tree.
+If you didn't implement remove, copy my implementation into your code.
+
+Modify remove() to throw an exception if you try to remove an item
+from an empty tree or if you try to remove an item not in the tree.
+
+----------------------------------------------------------------------
+
+My solution to both of the above is in:
+
+    StringTreeWithVerify.swift
+    VeryifyAndTreeEmptyTests.swift
+
+
+**********************************************************************
+THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
+**********************************************************************
 
 
 ======================================================================
