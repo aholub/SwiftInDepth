@@ -295,9 +295,8 @@ class Tree<T: Comparable> {
 That will allow the relational operators ( < > == etc ) to work correctly
 on node values.
 
-Also, extract the filter map and reduce methods into an extension rather
-than defining them in the tree class itself.
-
+Also, extract the filter() map() and reduce() methods into an extension
+rather than defining them in the tree class itself.
 
 **********************************************************************
 THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
