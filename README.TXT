@@ -27,9 +27,16 @@ My solutions all come with tests that use the XCT framework.
 ======================================================================
 Getting the code
 
-To install the solutions, clone the git repository to your own hard drive.
-The following git request puts it in the SwiftInDepth subdirectory of the
-current directory:
+My solutions are all available at
+
+    http://github.com/aholub/SwiftInDepth
+
+(I suppose you know that or you wouldn't be reading this file :-)
+You can just read them on gitHub if all you want to do is read them.
+
+To install the solutions on your own machine, clone the git repository
+to your own hard drive. The following git request puts it in the
+SwiftInDepth subdirectory of the current directory on your disk:
 
     git clone http://github.com/aholub/SwiftInDepth SwiftInDepth
 
@@ -40,10 +47,9 @@ command line with:
     cd SwiftInDepth
     open SwiftExercises.xcodeproj
 
-If that doesn't work for some reason, all of the source code files
-are just source-code files, so you can import them into a new, but
-empty XCode project using  File->Add Files To "MyProject" (or whatever
-your project is).
+If that doesn't work for some reason, you can import the source-code
+files into a new, but empty, XCode project using  
+File->Add Files To "MyProject" (or whatever your project is named).
 
 ======================================================================
 Asking Questions:
@@ -55,9 +61,9 @@ my class:
 
 That way we can all benefit. If you send me email, I'll most likely just
 copy it to the discussion group and post my answer there. (I'll write
-back to you when I post the reply). If you're using a pirated version
-of my class to learn Swift, so can't get at the Discussions,
-I have no sympathy for your plight. Sorry.
+back to you when I post the reply). If you can't get at the Discussions
+because you're using a pirated version of my class, I have absolutely
+no sympathy for your plight.
 
 ======================================================================
 After Module 3 
@@ -113,10 +119,10 @@ You should support the following methods and computed properties:
                  current: Node?,    // with the search starting here
                  parent: Node? )    // and this is the parent of the "current" node.
                                     // (nil if "current" is the root node)
-        -> (found: Node,            // Return an optional tuple that holds the matching node
-            parent: Node?)?         // and its parent (or nil if the matching node was
-                                    // the root node) Return nil if you didn't find
-                                    // the value you were looking for.
+        -> (found: Node,            // Return an optional tuple that holds the matching
+            parent: Node?)?         // node and its parent (or nil if the matching
+                                    // node was the root node) Return nil if you didn't
+                                    // find the value you were looking for.
 
     For example, to find the node "x," starting the search at the root node of the tree,
     you'd call:
@@ -127,8 +133,7 @@ My solution is in:
     StringTree.swift StringTreeTests.swift
 
 ----------------------------------------------------------------------
-2 (optional. This is hard, so take it as a challenge). Add:
-----------------------------------------------------------------------
+2: (optional. This is hard, so take it as a challenge). Add:
 
         remove( lookingFor: T ) -> T?
 
@@ -137,10 +142,7 @@ My solution is in:
 
 
 ----------------------------------------------------------------------
-3: Enums
-----------------------------------------------------------------------
-
-First, create an enum that represents a US, Canadian, or UK postal code:
+3: First, create an enum that represents a US, Canadian, or UK postal code:
 
         let usCode = PostalCode.US(12345,6789)
         let caCode = PostalCode.CA("A0A 0A0" )
@@ -191,7 +193,7 @@ My solution is in:
 After Module 4
 ======================================================================
 
-Add:
+4: Add:
     _verifyChildren( parent: T, expectedLeft: T?, expectedRight: T? ) -> Bool
 
 that verifies that the two children of the node with the given key (parent) have
@@ -252,12 +254,6 @@ My solution to both of the above is in:
     StringTreeWithVerify.swift
     VeryifyAndTreeEmptyTests.swift
 
-
-**********************************************************************
-THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
-**********************************************************************
-
-
 ======================================================================
 After Moudle 5 (Functions and CLosures)
 ======================================================================
@@ -276,6 +272,15 @@ Add the following methods to your Tree
     public func  reduce<U>(first: U, combine: (U, T) -> U) -> U
 
     t.asString ( delim: String = " " )
+
+My Solution:
+	StringTreeWithClosures.swift
+	StringTreeClosuresTests.swift
+
+
+**********************************************************************
+THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
+**********************************************************************
 
 ======================================================================
 After Modules 6 and 7 (Classes)
