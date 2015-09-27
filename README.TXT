@@ -257,7 +257,7 @@ My solution to both of the above is in:
 ======================================================================
 After Moudle 5 (Functions and CLosures)
 ======================================================================
-3:  (Closures)
+5:  (Closures)
 
 Add the following methods to your Tree
 
@@ -278,17 +278,14 @@ My Solution:
 	StringTreeClosuresTests.swift
 
 
-**********************************************************************
-THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
-**********************************************************************
-
 ======================================================================
 After Modules 6 and 7 (Classes)
 ======================================================================
 
-4. Get rid of the T typealais and make the tree class generic.
+6. Get rid of the T typealais and make the tree class generic.
 That is, create Tree<T> where T must implement the Comparable
-Protocol (String implements Comparable).
+Protocol (String implements Comparable). Also add public and private
+where appropriate. The class itself should be public.
 
 We haven't covered protocols at this point in the class, but the syntax is
 
@@ -298,11 +295,18 @@ class Tree<T: Comparable> {
 That will allow the relational operators ( < > == etc ) to work correctly
 on node values.
 
+Also, extract the filter map and reduce methods into an extension rather
+than defining them in the tree class itself.
+
+
+**********************************************************************
+THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
+**********************************************************************
 
 ======================================================================
 After Module 9 (Protocols)
 ======================================================================
-5.  Extend Tree with a SafeTree sublcass. Objects on the safe tree must implement
+7.  Extend Tree with a SafeTree sublcass. Objects on the safe tree must implement
 both Comparable and Lockable. The objects should be locked when
 added to the tree and unlocked when removed. Attempts to modify
 locked objects should result in an exception toss.
@@ -318,23 +322,26 @@ public enum LockedObjectException : ErrorType {
 public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
 
 ----------------------------------------------------------------------
-5.  Extract key operations (add remove traverse findMatchOf contains
+8.  Extract key operations (add remove traverse findMatchOf contains
 forEveryElement into a Collection protocol that Tree<T> must implment.
 
 Implement an UndoableTree<T: Comparable> :Collection, Undoable
-Undo should be implmented as a stack of tupples, one element of which
+Undo should be implemented as a stack of tuples, one element of which
 references a "do" operation and the other implements an "undo" operation.
-To undo, pop a tupple off the stack, execute its "undo", and push it onto a
-redo stack.
-To reco, pop a tuple off the redo stack, execute it's "redo" operation, and
-push it onto the undo stack.
+To undo, pop a tuple off the stack, execute its "undo", and push it onto a
+redo stack. To redo, pop a tuple off the redo stack, execute it's "redo"
+operation, and push it onto the undo stack.
+
+(As an aside, this is a classic example of the Gang Of Four "Command"
+design pattern, but with the Command object defined with a tuple rather
+than a class)
 
 public class UndoableTree<T: Comparable> : Collection, Undoable 
 
 ======================================================================
 After Module 10 (Customizing Swift)
 ======================================================================
-6. Operator overloads (add using the Extension mechanism )
+9. Operator overloads (add using the Extension mechanism )
 
     let t: Tree<String> = [ "a", "b", "c" ]
     

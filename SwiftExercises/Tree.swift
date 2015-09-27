@@ -43,14 +43,6 @@ public protocol Collection {
 }
 
 //======================================================================
-// Can't nest enums in a generic type!
-
-public enum Ordering { case Inorder, Postorder, Preorder }
-public enum Direction{ case Left, Right }
-
-public enum TreeError : ErrorType { case Empty }    // used by remove()
-
-//======================================================================
 public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
     private var root: Node<T>?
     private var size:    Int = 0;
