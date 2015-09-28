@@ -6,7 +6,11 @@ import Foundation
 
 //======================================================================
 
-public class SimpleGenericTree<T: Comparable> {
+// Note that in the following definition, you should comment out the :Collection
+// until you've done Exercise 7, which requires you to extract several methods
+// of the tree class into a Collection protocol.
+
+public class SimpleGenericTree<T: Comparable> : Collection  {
     private var root: Node<T>?
     private var size:    Int = 0;
     public var  count:   Int  { return size }

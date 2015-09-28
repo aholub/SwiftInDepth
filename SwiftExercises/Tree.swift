@@ -6,41 +6,7 @@ import Foundation
  *  cleans up the code
  */
 
-/// Note that both add and findMatchOf are risky because they add (and give access to) the
-/// object that's used as the "key," which could be a reference objecgt. If you modify
-/// that object, you'll break the tree. It would be better to use (and return) a copy.
-/// Since swift classes do not extend a universal base class (e.g. Object), there's no
-/// way to programmatically determine if something is a value type or a reference type
-/// in a generic. You can say "someObject is AnyClass" but that evaluates true for
-/// structs as well. Since there's no exception mechanism, you can't try to modify it
-/// and catch the error at runtime, either. In order to make findMatchOf optional,
-/// it has to go into an @objc base protocol, but it can't be generic in that case
-/// (no typealiases are allowed, so the argument and return have to be AnyObject),
-//  so you'll loose type safety.
 
-public protocol Collection {
-    typealias T
-    
-    /// Add an element to the tree. If it's a reference object, it's dangerous to keep
-    /// the element around after it's been added. If T adopts Lockable, then the
-    /// item is locked when it's added and unlocked when it's removed.
-    
-    func add( element: T        ) -> Bool
-    func remove( lookingFor: T  ) throws -> T?
-    
-    /// Find a matching element (using Comparable overrides) and return it.
-    /// Since this method makes it possible for someone to destroy the
-    /// tree's internal structure by modifying the node, this is a dangerous
-    /// method to provide. However, it's also ridiculous to require someone
-    /// to remove an element from the tree to examine it. Contains() is
-    /// safer. You don't have to worry about any of this if the element
-    /// is Lockable.
-    
-    func findMatchOf     ( lookingFor: T         ) -> T?
-    func contains        ( lookingFor: T         ) -> Bool
-    func traverse        ( iterator: (T)->Bool   )
-    func forEveryElement ( iterator: (T)->()     )
-}
 
 //======================================================================
 public class Tree<T: Comparable>: ArrayLiteralConvertible, Collection {
@@ -343,11 +309,18 @@ func -= <T>( left: Tree<T>, right: T ) {
 }
 
 /// Contains operator:
-///    t <> "x" is true if t is a Tree<String> that contains "x"
+///    t <> "x"  is true if t is a Tree<String> that contains "x"
+///    t !<> "x" is true if t is a Tree<String> that doesn't contain "x"
 ///
 infix operator <> { associativity left precedence 130 } // same as other relational ops
+infix operator !<> { associativity left precedence 130 } // same as other relational ops
+
 func <> <T>( left: Tree<T>, right: T ) -> Bool {
     return left.contains(right)
+}
+
+func !<> <T>( left: Tree<T>, right: T ) -> Bool {
+    return !left.contains(right)
 }
 
 extension Tree {
@@ -424,56 +397,3 @@ public class TreeGenerator<T>: GeneratorType {
     }
 }
 
-//======================================================================
-/// The safe tree adds the ability to lock a node when it's inserted in
-/// the tree and unlock it when it's removed. A locked node, once locked,
-/// must not change state in such a way that the Comparable methodds
-/// return different values.
-//======================================================================
-
-/// It's dangerous to put an item in the tree if the key values used by
-/// the Comparable methods can change their behavior when the item is
-/// is modified. In other words, if you put an item with a specific
-/// key value into the tree, changing the key without first removing
-/// it from the tree is a serious bug. Solve that problem with a tree
-/// make up of "Lockable" objects. Lockable objects, once locked, cannot
-/// be modified in such a way that the behvior of the Comparable methods would
-/// change if the item is manipulated in some way.
-///
-/// THIS CLASS IS SUSEPTABLE TO FRAGILE-BASE-CLASS bugs. It's essential that
-/// all Tree<T> methods that can modify the tree have overrides in the
-/// current class. Be careful. See the Undoable Tree for a way around this
-/// problem.
-
-public protocol Lockable {
-    func lock   ()->()
-    func unlock ()->()
-}
-
-public enum LockedObjectException : ErrorType {
-    case ObjectLocked
-}
-
-public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
-{
-    public required init( arrayLiteral elements: T...) {
-        super.init(elements)
-    }
-    
-    public override init( _ array: [T] ) {
-        super.init(array)
-    }
-    
-    public override func add( element: T        ) -> Bool {
-        element.lock()
-        return super.add(element)
-    }
-    
-    public override func remove( lookingFor: T  ) throws -> T? {
-        let found = try! super.remove(lookingFor)
-        if found != nil {
-            found?.unlock()
-        }
-        return found
-    }
-}

@@ -24,6 +24,20 @@ tests to verify that everything works. If you haven't done that before,
 Apple describes the testing system at: http://apple.co/1Mr3XFE .
 My solutions all come with tests that use the XCT framework.
 
+The actual code is in the SwiftExercises group, and all the tests
+are in the SwiftExercisesTest group. The groups form separate "targets"
+(modules). The tests, since they're in a different target, must use the
+following import statement to access the classes they're testing:
+
+@testable import SwiftExercises
+
+To get that to work, you'll need to tell XCode that the SwiftExercises
+group defines a "module." To do that, go into the "Project Navigator"
+(View->Navigators->Show Project Navigator) and highlight the project
+itself (at the very top of the window with the blue icon to its left)
+On the Right, Select "Swift Exercises" under "TARGETS." Scroll down
+to the "Packaging" category and set "Defines Module" to "Yes."
+
 ======================================================================
 Getting the code
 
@@ -282,7 +296,7 @@ My Solution:
 After Modules 6 and 7 (Classes)
 ======================================================================
 
-6. Get rid of the T typealais and make the tree class generic.
+6. Get rid of the T typealias and make the tree class generic.
 That is, create Tree<T> where T must implement the Comparable
 Protocol (String implements Comparable). Also add public and private
 where appropriate. The class itself should be public.
@@ -298,55 +312,98 @@ on node values.
 Also, extract the filter() map() and reduce() methods into an extension
 rather than defining them in the tree class itself.
 
-**********************************************************************
-THE REMAINDER OF THIS FILE IS A WORK IN PROGRESS. PLEASE IGNORE IT!
-**********************************************************************
+MySolution: SimpleGenericTree.swift
+			SimpleGenericTreeTests.swift
 
 ======================================================================
 After Module 9 (Protocols)
 ======================================================================
-7.  Extend Tree with a SafeTree sublcass. Objects on the safe tree must implement
-both Comparable and Lockable. The objects should be locked when
-added to the tree and unlocked when removed. Attempts to modify
-locked objects should result in an exception toss.
 
-    public protocol Lockable {
-    func lock   ()->()
-    func unlock ()->()
+7. Extract the key operations (add, remove, traverse, contains, findMatchOf,
+forEveryElement, and the count computed property) into a Collection protocol
+and modify your generic tree implementation to implement that protocol.
 
-public enum LockedObjectException : ErrorType {
-    case ObjectLocked
-}
+My Solution:
+	Collection.swift (and comment in the :Collection in SimpleGenericTree.swift)
 
-public class SafeTree<T where T:Lockable, T:Comparable > : Tree<T>
+8. Extend the Collection protocol to add the method median(), which finds
+the "median" element (e.g. if you turned the tree into an array with
+indexes 0 to i, the median element would be at tree[i/2]. That's not
+the same thing as the root element. Do not turn to tree into an array
+to solve this problem, however.) Return nil if the tree is empty.
+
+My Solution:
+	Median.swift
+	MedianTests.swift
 
 ----------------------------------------------------------------------
-8.  Extract key operations (add remove traverse findMatchOf contains
-forEveryElement into a Collection protocol that Tree<T> must implment.
 
-Implement an UndoableTree<T: Comparable> :Collection, Undoable
-Undo should be implemented as a stack of tuples, one element of which
-references a "do" operation and the other implements an "undo" operation.
-To undo, pop a tuple off the stack, execute its "undo", and push it onto a
-redo stack. To redo, pop a tuple off the redo stack, execute it's "redo"
-operation, and push it onto the undo stack.
+9. Implement an UndoableTree class into which you can insert any Comparable
+object. This class should adopt Collection, and should also adopt the
+Undoable protocol, which has the members undo() and redo().
+
+Calling undo() should reverse the last modification (add or remove).
+Subsequently calling redo() should reverse the most recent undo().
+It must be possible to call undo() multiple times and then reverse
+the set of undo operations by calling redo() as many times as you called
+undo().
+
+Implemented this mechanism using a stack of tuples that contain two closures.
+One of these closures implements a "do" operation and the other
+implements an "undo" operation.
+To undo, pop a tuple off the stack, execute its "undo" closure,
+and then push the tuple onto a redo stack. To redo, pop a tuple off the
+redo stack, execute it's "redo" closure, and then push the tuple
+onto the undo stack.
 
 (As an aside, this is a classic example of the Gang Of Four "Command"
 design pattern, but with the Command object defined with a tuple rather
 than a class)
 
-public class UndoableTree<T: Comparable> : Collection, Undoable 
+My Solution:
+	UndoableTree.swift
+	UndoableTreeTests.swift
 
 ======================================================================
 After Module 10 (Customizing Swift)
 ======================================================================
-9. Operator overloads (add using the Extension mechanism )
+
+10. One problem with the tree is that, if you change the value of the
+"key" after you've inserted an item into a tree, then the entire
+tree structure becomes invalid. Solve that problem by introducing a Lockable
+protocol with two members, lock() and unlock(). Then implement a
+SafeTree subclass of our generic tree whose members must adopt
+both Comparable (as is the case with our original tree) and Lockable.
+The add() method locks the inserted item, and the remove() method unlocks it.
+Any attempt to modify a locked item should result in a exception toss.
+(You may not recycle any of the standard exception types for this purpose---make
+up one of your own).
+
+Test your Safe Tree using a class of your own creation that implements
+both Lockable and Comparable.
+
+My Solution:
+	SafeTree.swift
+	SafeTreeTests.swift
+	
+----------------------------------------------------------------------
+11. Modify your tree so that it supports the following operations. (Use
+   the Extension mechanism when possible)
 
     let t: Tree<String> = [ "a", "b", "c" ]
     
     t += "d"
     t -= "a"
-    if( t <> "a" ) {...}   // t contains "a"
+    if( t <> "a" ) {...}    // if t contains "a"
+    if( t !<> "a" ) {...}   // if t doesn't contain "a"
 
-    let x = t[1]        (read only. t[1] = "x" shouldn't owrk)
+    let x = t[1]        (read only. t[1] = "x" shouldn't work)
 
+	for element in t {
+		print("\(t)" )
+	}
+
+My Solution
+
+Tree.swift
+TreeTests.swift

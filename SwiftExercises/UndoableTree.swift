@@ -17,9 +17,11 @@ public protocol Undoable {
 /// Tree, and then at some future date added another variant of add()
 /// to the Tree class, we would probably not override that other variant,
 /// here. That would put us into the position of blowing up if we tried
-/// to do an undo on a field that was added using that other variant,
-/// because the extra undo-related work would not have been done.
-/// Solve the problem by implementing Collection and then use a tree
+/// to do an undo on a field that was added using that new variant of add(),
+/// because the extra undo-related work would not have been done by the
+/// new variant.
+///
+/// Solve the problem by implementing Collection and then *use* a tree
 /// to store the data.
 
 public class UndoableTree<T: Comparable> : Collection, Undoable {
@@ -28,6 +30,8 @@ public class UndoableTree<T: Comparable> : Collection, Undoable {
 
     private var undoStack: [ (undo:()->(), redo:()->()) ] = []
     private var redoStack: [ (undo:()->(), redo:()->()) ] = []
+
+    public var count: Int { return data.count }
 
     public func add( element: T ) -> Bool {
         undoStack.append(
